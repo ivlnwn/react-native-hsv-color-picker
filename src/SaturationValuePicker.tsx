@@ -33,20 +33,7 @@ interface DragStartState {
 }
 
 type ReturnType = React.FunctionComponentElement<React.ForwardRefRenderFunction<any, Props>>;
-// SaturationValuePicker.defaultProps = {
-  //   containerStyle: {},
-  //   borderRadius: 0,
-  //   size: 200,
-  //   sliderSize: 24,
-  //   hue: 0,
-  //   saturation: 1,
-  //   value: 1,
-  //   onDragStart: null,
-  //   onDragMove: null,
-  //   onDragEnd: null,
-  //   onDragTerminate: null,
-  //   onPress: null,
-  // };
+
 function SaturationValuePicker(
   {
     width = 200,
@@ -65,7 +52,6 @@ function SaturationValuePicker(
   }: Props,
   ref: React.Ref<any>,
 ): ReturnType {
-  // eslint-disable-next-line no-unused-vars
   const [dragStartValue, setDragStartValue] = useState<DragStartState>({
     saturation: saturation,
     value: value,
@@ -79,8 +65,8 @@ function SaturationValuePicker(
     const updatedSatVal = {
       saturation: normalizeValue(saturation + diffx),
       value: normalizeValue(value - diffy),
-    }
-    setDragStartValue(updatedSatVal)
+    };
+    setDragStartValue(updatedSatVal);
     return updatedSatVal;
   }
 
@@ -125,10 +111,12 @@ function SaturationValuePicker(
   function computeSatValPress(event: any) {
     const {nativeEvent} = event;
     const {locationX, locationY} = nativeEvent;
-    return {
+    const updatedSatVal = {
       saturation: normalizeValue(locationX / width),
       value: 1 - normalizeValue(locationY / height),
     };
+    setDragStartValue(updatedSatVal);
+    return updatedSatVal;
   }
 
   function firePressEvent(event: any) {

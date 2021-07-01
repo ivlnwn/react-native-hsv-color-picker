@@ -122,7 +122,8 @@ export default function HuePicker({
   function computeHueValuePress(event: {nativeEvent: any}) {
     const {nativeEvent} = event;
     const location = nativeEvent[directionProps.gesturePressLocation];
-    const updatedHue = normalizeValue(location / barWidth) * 360;
+    const updatedHue = normalizeValue(location / longSide) * 360;
+    setDragStartValue(updatedHue);
     return updatedHue;
   }
 
