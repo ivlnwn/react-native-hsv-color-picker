@@ -29,7 +29,7 @@ interface Props {
   onSatValPickerDragEnd: (satValPicker: {saturation: number; value: number}) => void;
   onSatValPickerDragTerminate: (satValPicker: {saturation: number; value: number}) => void;
   onSatValPickerPress: (satValPicker: {saturation: number; value: number}) => void;
-  huePickerDirection?: 'horizontal' | 'vertical';
+  huePickerArrangement?: 'horizontal' | 'vertical';
 }
 
 function HsvColorPicker(
@@ -59,7 +59,7 @@ function HsvColorPicker(
     onSatValPickerDragEnd,
     onSatValPickerDragTerminate,
     onSatValPickerPress,
-    huePickerDirection = 'vertical',
+    huePickerArrangement = 'vertical',
   }: Props,
   ref: React.Ref<any>,
 ): React.FunctionComponentElement<ForwardRefRenderFunction<any, Props>> {
@@ -71,7 +71,7 @@ function HsvColorPicker(
     getCurrentColor,
   }));
 
-  const flexDirection = huePickerDirection === 'horizontal' ? 'column' : 'row';
+  const flexDirection = huePickerArrangement === 'horizontal' ? 'column' : 'row';
 
   return (
     <View style={[styles.container, {flexDirection}, containerStyle]}>
@@ -92,7 +92,7 @@ function HsvColorPicker(
         ref={satValPickerRef}
       />
       <HuePicker
-        direction={huePickerDirection}
+        arrangement={huePickerArrangement}
         containerStyle={huePickerContainerStyle}
         borderRadius={huePickerBorderRadius}
         hue={huePickerHue}

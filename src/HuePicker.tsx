@@ -13,7 +13,7 @@ import chroma from 'chroma-js';
 import normalizeValue from './utils';
 
 interface Props {
-  direction: 'horizontal' | 'vertical';
+  arrangement: 'horizontal' | 'vertical';
   containerStyle: StyleProp<ViewStyle>;
   borderRadius?: number;
   hue: number;
@@ -38,7 +38,7 @@ const hueColors: string[] = [
 ];
 
 export default function HuePicker({
-  direction = 'vertical',
+  arrangement = 'vertical',
   containerStyle,
   borderRadius = 0,
   hue = 0,
@@ -53,11 +53,11 @@ export default function HuePicker({
 }: Props): React.FunctionComponentElement<Props> {
   const [dragStartValue, setDragStartValue] = useState<number>(hue);
 
-  const longSide = direction === 'horizontal' ? barWidth : barHeight;
-  const shortSide = direction === 'horizontal' ? barHeight : barWidth;
+  const longSide = arrangement === 'horizontal' ? barWidth : barHeight;
+  const shortSide = arrangement === 'horizontal' ? barHeight : barWidth;
 
-  const directionProps = useMemo(() => {
-    if (direction === 'horizontal') {
+  const arrangementProps = useMemo(() => {
+    if (arrangement === 'horizontal') {
       return {
         containerIndentsStyle: {
           paddingHorizontal: sliderSize / 2,
@@ -80,7 +80,7 @@ export default function HuePicker({
   }, []);
 
   const slider = new Animated.Value((longSide * hue) / 360);
-  const translate = direction === 'horizontal' ? {translateX: slider} : {translateY: slider};
+  const translate = arrangement === 'horizontal' ? {translateX: slider} : {translateY: slider};
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -112,7 +112,7 @@ export default function HuePicker({
   }
 
   function computeHueValueDrag(gestureState: any) {
-    const gestureCoordinates = gestureState[directionProps.gestureDragCoordinates];
+    const gestureCoordinates = gestureState[arrangementProps.gestureDragCoordinates];
     const diff = gestureCoordinates / longSide;
     const updatedHue = normalizeValue(dragStartValue / 360 + diff) * 360;
     setDragStartValue(updatedHue);
@@ -121,7 +121,7 @@ export default function HuePicker({
 
   function computeHueValuePress(event: {nativeEvent: any}) {
     const {nativeEvent} = event;
-    const location = nativeEvent[directionProps.gesturePressLocation];
+    const location = nativeEvent[arrangementProps.gesturePressLocation];
     const updatedHue = normalizeValue(location / longSide) * 360;
     setDragStartValue(updatedHue);
     return updatedHue;
@@ -145,7 +145,7 @@ export default function HuePicker({
   }
 
   return (
-    <View style={[styles.container, directionProps.containerIndentsStyle, containerStyle]}>
+    <View style={[styles.container, arrangementProps.containerIndentsStyle, containerStyle]}>
       <TouchableWithoutFeedback onPress={firePressEvent}>
         <LinearGradient
           colors={hueColors}
@@ -153,7 +153,7 @@ export default function HuePicker({
             borderRadius,
           }}
           start={{x: 0, y: 0}}
-          end={directionProps.gradientEnd}
+          end={arrangementProps.gradientEnd}
         >
           <View
             style={{
