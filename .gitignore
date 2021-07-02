@@ -17,3 +17,6 @@ coverage/
 
 # expo
 .expo/*
+
+# vscode
+.vscode/

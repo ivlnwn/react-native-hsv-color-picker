@@ -1,68 +1,59 @@
-import React, {forwardRef, ForwardRefRenderFunction, useImperativeHandle, useRef} from 'react';
+import React, {forwardRef, ForwardRefRenderFunction, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {View, StyleProp, StyleSheet, ViewStyle} from 'react-native';
+import {colorConverter} from './utils';
 import HuePicker from './HuePicker';
 import SaturationValuePicker from './SaturationValuePicker';
 
 interface Props {
-  containerStyle: StyleProp<ViewStyle>;
-  huePickerContainerStyle: StyleProp<ViewStyle>;
-  huePickerBorderRadius: number;
-  huePickerHue: number;
-  huePickerBarWidth: number;
-  huePickerBarHeight: number;
-  huePickerSliderSize: number;
-  onHuePickerDragStart: (huePicker: {hue: number}) => void;
-  onHuePickerDragMove: (huePicker: {hue: number}) => void;
-  onHuePickerDragEnd: (huePicker: {hue: number}) => void;
-  onHuePickerDragTerminate: (huePicker: {hue: number}) => void;
-  onHuePickerPress: (huePicker: {hue: number}) => void;
-  satValPickerContainerStyle: StyleProp<ViewStyle>;
-  satValPickerBorderRadius: number;
-  satValPickerHeight: number;
-  satValPickerWidth: number;
-  satValPickerSliderSize: number;
-  satValPickerHue: number;
-  satValPickerSaturation: number;
-  satValPickerValue: number;
-  onSatValPickerDragStart: (satValPicker: {saturation: number; value: number}) => void;
-  onSatValPickerDragMove: (satValPicker: {saturation: number; value: number}) => void;
-  onSatValPickerDragEnd: (satValPicker: {saturation: number; value: number}) => void;
-  onSatValPickerDragTerminate: (satValPicker: {saturation: number; value: number}) => void;
-  onSatValPickerPress: (satValPicker: {saturation: number; value: number}) => void;
+  color: string | number[];
+  onColorChange: (newColor: string) => void;
+  containerStyle?: StyleProp<ViewStyle>;
+  huePickerContainerStyle?: StyleProp<ViewStyle>;
+  huePickerBorderRadius?: number;
+  huePickerBarWidth?: number;
+  huePickerBarHeight?: number;
+  huePickerSliderSize?: number;
+  satValPickerContainerStyle?: StyleProp<ViewStyle>;
+  satValPickerBorderRadius?: number;
+  satValPickerHeight?: number;
+  satValPickerWidth?: number;
+  satValPickerSliderSize?: number;
   huePickerArrangement?: 'horizontal' | 'vertical';
+  huePickerBorderColorized?: boolean;
 }
 
 function HsvColorPicker(
   {
+    onColorChange,
+    color,
     containerStyle,
     huePickerContainerStyle,
     huePickerBorderRadius,
-    huePickerHue,
     huePickerBarWidth,
     huePickerBarHeight,
     huePickerSliderSize,
-    onHuePickerDragStart,
-    onHuePickerDragMove,
-    onHuePickerDragEnd,
-    onHuePickerDragTerminate,
-    onHuePickerPress,
     satValPickerContainerStyle,
     satValPickerBorderRadius,
     satValPickerHeight,
     satValPickerWidth,
     satValPickerSliderSize,
-    satValPickerHue,
-    satValPickerSaturation,
-    satValPickerValue,
-    onSatValPickerDragStart,
-    onSatValPickerDragMove,
-    onSatValPickerDragEnd,
-    onSatValPickerDragTerminate,
-    onSatValPickerPress,
     huePickerArrangement = 'vertical',
+    huePickerBorderColorized = false,
   }: Props,
   ref: React.Ref<any>,
 ): React.FunctionComponentElement<ForwardRefRenderFunction<any, Props>> {
+
+  const hsvColor = useMemo(() => {
+    if (typeof color === 'string') {
+      return colorConverter(color);
+    }
+    return color;
+  }, [color]);
+
+  const [hue, setHue] = useState<number>(hsvColor[0]);
+  const [sat, setSat] = useState<number>(hsvColor[1]);
+  const [val, setVal] = useState<number>(hsvColor[2]);
+
   const satValPickerRef = useRef<any>();
 
   const getCurrentColor = () => satValPickerRef.current?.getCurrentColor;
@@ -71,9 +62,22 @@ function HsvColorPicker(
     getCurrentColor,
   }));
 
+  useEffect(() => {
+    onColorChange(satValPickerRef.current?.getCurrentColor());
+  }, [hue, onColorChange, sat, val])
+
   const flexDirection = huePickerArrangement === 'horizontal' ? 'column' : 'row';
 
-  return (
+  function onSatValChange(satValPicker: {saturation: number; value: number}): void {
+    setSat(satValPicker.saturation);
+    setVal(satValPicker.value);
+  }
+
+  function onHueChange(hue: number): void {
+    setHue(hue);
+  }
+
+return (
     <View style={[styles.container, {flexDirection}, containerStyle]}>
       <SaturationValuePicker
         containerStyle={satValPickerContainerStyle}
@@ -81,29 +85,24 @@ function HsvColorPicker(
         height={satValPickerHeight}
         width={satValPickerWidth}
         sliderSize={satValPickerSliderSize}
-        hue={satValPickerHue}
-        saturation={satValPickerSaturation}
-        value={satValPickerValue}
-        onDragStart={onSatValPickerDragStart}
-        onDragMove={onSatValPickerDragMove}
-        onDragEnd={onSatValPickerDragEnd}
-        onDragTerminate={onSatValPickerDragTerminate}
-        onPress={onSatValPickerPress}
+        hue={hue}
+        saturation={sat}
+        value={val}
+        onDragMove={onSatValChange}
+        onPress={onSatValChange}
         ref={satValPickerRef}
       />
       <HuePicker
         arrangement={huePickerArrangement}
         containerStyle={huePickerContainerStyle}
         borderRadius={huePickerBorderRadius}
-        hue={huePickerHue}
+        hue={hue}
         barWidth={huePickerBarWidth}
         barHeight={huePickerBarHeight}
         sliderSize={huePickerSliderSize}
-        onDragStart={onHuePickerDragStart}
-        onDragMove={onHuePickerDragMove}
-        onDragEnd={onHuePickerDragEnd}
-        onDragTerminate={onHuePickerDragTerminate}
-        onPress={onHuePickerPress}
+        onDragMove={onHueChange}
+        onPress={onHueChange}
+        borderColorized={huePickerBorderColorized}
       />
     </View>
   );

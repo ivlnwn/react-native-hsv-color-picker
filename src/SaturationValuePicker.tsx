@@ -9,21 +9,18 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import chroma from 'chroma-js';
-import normalizeValue from './utils';
+import {normalizeValue} from './utils';
 
 interface Props {
-  containerStyle: StyleProp<ViewStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
   borderRadius?: number;
   width?: number;
   height?: number;
   sliderSize?: number;
-  hue: number;
-  saturation: number;
-  value: number;
-  onDragStart: (satValPicker: {saturation: number; value: number}) => void;
+  hue?: number;
+  saturation?: number;
+  value?: number;
   onDragMove: (satValPicker: {saturation: number; value: number}) => void;
-  onDragEnd: (satValPicker: {saturation: number; value: number}) => void;
-  onDragTerminate: (satValPicker: {saturation: number; value: number}) => void;
   onPress: (satValPicker: {saturation: number; value: number}) => void;
 }
 
@@ -44,10 +41,7 @@ function SaturationValuePicker(
     borderRadius = 0,
     sliderSize = 24,
     hue = 0,
-    onDragEnd,
-    onDragStart,
     onDragMove,
-    onDragTerminate,
     onPress,
   }: Props,
   ref: React.Ref<any>,
@@ -85,17 +79,14 @@ function SaturationValuePicker(
     onMoveShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponderCapture: () => true,
     onPanResponderGrant: (evt, gestureState) => {
-      fireDragEvent(onDragStart, gestureState);
     },
     onPanResponderMove: (evt, gestureState) => {
       fireDragEvent(onDragMove, gestureState);
     },
     onPanResponderTerminationRequest: () => true,
     onPanResponderRelease: (evt, gestureState) => {
-      fireDragEvent(onDragEnd, gestureState);
     },
     onPanResponderTerminate: (evt, gestureState) => {
-      fireDragEvent(onDragTerminate, gestureState);
     },
     onShouldBlockNativeResponder: () => true,
   });
