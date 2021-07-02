@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import HsvColorPicker from '../src';
 
 export default class App extends React.Component {
@@ -15,21 +15,21 @@ export default class App extends React.Component {
     this.hsvColorPicker = React.createRef();
   }
 
-  onSatValPickerChange({ saturation, value }) {
+  onSatValPickerChange({saturation, value}) {
     this.setState({
       sat: saturation,
       val: value,
     });
   }
 
-  onHuePickerChange({ hue }) {
+  onHuePickerChange({hue}) {
     this.setState({
       hue,
     });
   }
 
   render() {
-    const { hue, sat, val } = this.state;
+    const {hue, sat, val} = this.state;
     return (
       <View style={styles.container}>
         <HsvColorPicker

@@ -1,13 +1,10 @@
 module.exports = (api) => {
-  const isBabelJest = api.caller(caller => caller && caller.name === 'babel-jest');
-  if (isBabelJest) {
-    return {
-      presets: [
-        'module:metro-react-native-babel-preset',
-      ],
-    };
-  }
+  const productionPlugins = api.env('production') ? [['transform-remove-console']] : [];
+
   return {
-    presets: ['babel-preset-expo'],
+    presets: ['module:metro-react-native-babel-preset'],
+    plugins: [
+      ...productionPlugins,
+    ],
   };
 };
